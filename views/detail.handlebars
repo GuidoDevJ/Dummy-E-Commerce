@@ -47,7 +47,7 @@
               <div class="as-dummy-container as-dummy-img">
 
                 <img src="./assets/wireless-headphones" class="ir ir item-image as-producttile-image"
-                  style="max-width: 70%;max-height: 70%;" alt="" width="445" height="445" />
+                  style="max-width: 70%;max-height: 70%;" alt="" width="445" height="445" id="imgProduct" />
               </div>
               <div class="images mini-gallery gal5">
 
@@ -57,7 +57,7 @@
                     <div class="as-tilegallery-element as-image-selected">
                       <div class=""></div>
                       <img src="./assets/003.jpg" class="ir ir item-image as-producttile-image productImg" alt=""
-                        width="445" height="445" style="content:-webkit-image-set(url({{img}}) 2x);" />
+                        width="445" height="445" style="content:-webkit-image-set(url('{{img}}') 2x);" />
                     </div>
 
                   </div>
@@ -99,31 +99,38 @@
   const title = document.querySelector(".titleArt").innerHTML.trim();
   const unitPrice = document.querySelector(".price").innerHTML.trim();
   const quantity = document.querySelector(".unit").innerHTML.trim();
-  const pictureUrl = document.querySelector("img.productImg").getAttribute("src");
+  const pictureUrl = document.getElementById("imgProduct").getAttribute("src");
   const button = document.querySelector(".mercadopago-button");
   const baseUrl = window.location.protocol + '//' + window.location.host;
 
-  button.addEventListener("click", async () => {
-    const resultString = pictureUrl.replace(/\.\//g, '');
-    try {
-      const response = await fetch("https://mercado-certification.vercel.app/create-order", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json', // Specify content type as JSON
-        },
-        body: JSON.stringify({
-          title,
-          unit_price: unitPrice,
-          quantity,
-          pictureUrl: `${baseUrl}/${resultString}`
-        })
+  document.addEventListener("DOMContentLoaded", () => {
+    button.addEventListener("click", async () => {
 
-      })
-      console.log(response)
-    } catch (error) {
-      console.log("Estoy en el error==>", error)
-    }
+      const data = {
+        title,
+        unit_price: parseInt(unitPrice),
+        quantity: parseInt(quantity),
+        picture_url: pictureUrl,
+      }
+      try {
+        console.log("Soy la data que envio ===>", JSON.stringify(data))
+        const response = await fetch("https://mercadopago-d969.onrender.com/create-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data)
+        });
+        const datas = await response.json();
+        // const datas = await response.json();
+        // Handle the response data as needed
+        console.log("Response from server:", datas);
+        window.location.href = datas.url
+        // console.log("Response from server:", datas.url);
+      } catch (error) {
+        // Handle any errors
+        console.log("Error:", error);
+      }
+    })
   });
-
 </script>
-` `

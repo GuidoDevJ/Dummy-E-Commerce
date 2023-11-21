@@ -1,9 +1,10 @@
 var express = require('express');
 var { engine } = require('express-handlebars');
+const cors = require('cors');
 var port = process.env.PORT || 3000
 
 var app = express();
-
+app.use(cors())
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 
@@ -19,4 +20,6 @@ app.get('/detail', function (req, res) {
     res.render('detail', req.query);
 });
 
-app.listen(port);
+app.listen(port, () => {
+    console.log("Corriendo en el puerto", port)
+});
